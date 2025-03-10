@@ -17,6 +17,7 @@ function App() {
         <Route path="/driver" element={<DriverHome />} />
         <Route path="/customer" element={<CustomerHomePage />} /> 
         <Route path="/ManageBookings" element={<ManageBookings />} />
+        <Route path="/DeleteDrivers" element={<DeleteDrivers />} />
         
       </Routes>
     </Router>
