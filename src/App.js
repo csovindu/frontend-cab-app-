@@ -6,7 +6,8 @@ import AdminHome from "./AdminHome";
 import DriverHome from "./DriverHome";
 import CustomerHomePage from "./CustomerHomePage";
 import ManageBookings from "./ManageBookings";
-
+import ManageCar from "./ManageCar";
+import DriverInProgressBookings from "./DriverInProgressBookings";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
         <Route path="/customer" element={<CustomerHomePage />} /> 
         <Route path="/ManageBookings" element={<ManageBookings />} />
         <Route path="/DeleteDrivers" element={<DeleteDrivers />} />
-        
+        <Route path="/ManageCar" element={<ManageCar />} />
+        <Route path="/DriverInProgressBookings" element={<DriverInProgressBookings />} />
       </Routes>
     </Router>
   );
