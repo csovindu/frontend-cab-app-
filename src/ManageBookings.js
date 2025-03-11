@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Container, Card, Button, Row, Col, Navbar, Nav } from "react-bootstrap";
+import { Container, Card, Button, Row, Col, Navbar, Nav, Form, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 function BookingManagement() {
-  const [reservations, setReservations] = useState([]); // Booking data
-  const [vehicleDetails, setVehicleDetails] = useState({}); // Store car details by car ID
-  const [loadingVehicles, setLoadingVehicles] = useState(false); // Loading state for cars
+  const [reservations, setReservations] = useState([]);
+  const [vehicleDetails, setVehicleDetails] = useState({});
+  const [loadingVehicles, setLoadingVehicles] = useState(false);
+  const [editReservationId, setEditReservationId] = useState(null);
+  const [editFormData, setEditFormData] = useState({ location: "", time: "", totalfee: "" });
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Fetch all reservations
   useEffect(() => {
@@ -13,7 +16,6 @@ function BookingManagement() {
       try {
         const response = await fetch("http://localhost:8080/rental/all");
         if (!response.ok) throw new Error("Failed to fetch bookings");
-
         const data = await response.json();
         setReservations(data);
       } catch (error) {
@@ -38,7 +40,6 @@ function BookingManagement() {
           try {
             const response = await fetch(`http://localhost:8080/cars/${carid}`);
             if (!response.ok) throw new Error("Failed to fetch car data");
-
             const data = await response.json();
             carData[carid] = data;
           } catch (error) {
@@ -68,30 +69,78 @@ function BookingManagement() {
     }
   };
 
+  // Start editing a reservation
+  const handleEditClick = (reservation) => {
+    setEditReservationId(reservation.id);
+    setEditFormData({
+      location: reservation.location,
+      time: reservation.time,
+      totalfee: reservation.totalfee || "",
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Save edited reservation
+  const saveEdit = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/rental/update/${editReservationId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...reservations.find(r => r.id === editReservationId),
+          ...editFormData,
+          totalfee: parseFloat(editFormData.totalfee) || 0,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to update reservation");
+
+      setReservations(prev =>
+        prev.map(reservation =>
+          reservation.id === editReservationId
+            ? { ...reservation, ...editFormData, totalfee: parseFloat(editFormData.totalfee) || 0 }
+            : reservation
+        )
+      );
+      setEditReservationId(null);
+      setShowEditModal(false);
+      alert("Reservation updated successfully!");
+    } catch (error) {
+      console.error("Error updating reservation:", error);
+      alert("Failed to update reservation.");
+    }
+  };
+
   return (
     <>
       {/* Navigation Bar */}
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200">
-  <Container>
-    <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
-      🚗 Rent-A-Car
-    </Navbar.Brand>
-    <Navbar.Toggle aria-controls="navbarContent" />
-    <Navbar.Collapse id="navbarContent">
-      <Nav className="ms-auto flex items-center gap-4">
-        <Nav.Link as={Link} to="/AdminHome"className="text-gray-700 hover:text-blue-600 transition font-medium">Add Car</Nav.Link>
-         <Nav.Link as={Link} to="/ManageCar"className="text-gray-700 hover:text-blue-600 transition font-medium">Manage Cars</Nav.Link>
-        <Nav.Link as={Link} to="/AddDriver" className="text-gray-700 hover:text-blue-600 transition font-medium">Add Driver</Nav.Link>
-        <Nav.Link as={Link} to="/DeleteDrivers" className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Drivers</Nav.Link>
-          <Nav.Link as={Link} to="/DeleteUsers"className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Users</Nav.Link>
-          <Nav.Link onClick={(e) => e.preventDefault()} className="text-gray-700 hover:text-blue-600 transition font-medium">Manage Bookings</Nav.Link>
-        <Button as={Link} to="/" variant="outline-danger" className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
-          Logout
-        </Button>
-      </Nav>
-    </Navbar.Collapse>
-  </Container>
-</Navbar>
+        <Container>
+          <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
+          🚘cab booking system
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarContent" />
+          <Navbar.Collapse id="navbarContent">
+            <Nav className="ms-auto flex items-center gap-4">
+              <Nav.Link as={Link} to="/AdminHome" className="text-gray-700 hover:text-blue-600 transition font-medium">Add Car</Nav.Link>
+              <Nav.Link as={Link} to="/ManageCar" className="text-gray-700 hover:text-blue-600 transition font-medium">Manage Cars</Nav.Link>
+              <Nav.Link as={Link} to="/AddDriver" className="text-gray-700 hover:text-blue-600 transition font-medium">Add Driver</Nav.Link>
+              <Nav.Link as={Link} to="/DeleteDrivers" className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Drivers</Nav.Link>
+              <Nav.Link as={Link} to="/DeleteUsers" className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Users</Nav.Link>
+              <Nav.Link as={Link} to="/ManageBookings" className="text-gray-700 hover:text-blue-600 transition font-medium active">Manage Bookings</Nav.Link>
+              <Button as={Link} to="/" variant="outline-danger" className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
+                Logout
+              </Button>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
 
       <Container className="mt-4">
         <h2 className="text-center mb-4">Admin - All Reservations</h2>
@@ -125,9 +174,24 @@ function BookingManagement() {
                           {reservation.paymentstatus === 0 ? "Unpaid" : "Paid"}
                         </span>
                       </Card.Text>
-                      <Button variant="danger" size="sm" onClick={() => cancelReservation(reservation.id)}>
-                        Cancel Reservation
-                      </Button>
+                      <div className="d-flex gap-2">
+                        <Button 
+                          variant="outline-primary" 
+                          size="sm" 
+                          onClick={() => handleEditClick(reservation)}
+                          style={{ backgroundColor: "#cce5ff", borderColor: "#b8daff", color: "#004085" }}
+                        >
+                          Edit
+                        </Button>
+                        <Button 
+                          variant="outline-danger" 
+                          size="sm" 
+                          onClick={() => cancelReservation(reservation.id)}
+                          style={{ backgroundColor: "#f8d7da", borderColor: "#f5c6cb", color: "#721c24" }}
+                        >
+                          Cancel Reservation
+                        </Button>
+                      </div>
                     </Card.Body>
                   </Card>
                 </Col>
@@ -138,6 +202,53 @@ function BookingManagement() {
           <p className="text-center">No reservations found</p>
         )}
       </Container>
+
+      {/* Edit Reservation Modal */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Reservation #{editReservationId}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>Pickup Location</Form.Label>
+              <Form.Control
+                type="text"
+                name="location"
+                value={editFormData.location}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Pickup Time</Form.Label>
+              <Form.Control
+                type="text"
+                name="time"
+                value={editFormData.time}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Total Cost</Form.Label>
+              <Form.Control
+                type="number"
+                name="totalfee"
+                value={editFormData.totalfee}
+                onChange={handleInputChange}
+                step="0.01"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={saveEdit}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

@@ -79,7 +79,7 @@ function AdminHome() {
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200">
   <Container>
     <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
-      🚗 Rent-A-Car
+    🚘cab booking system
     </Navbar.Brand>
     <Navbar.Toggle aria-controls="navbarContent" />
     <Navbar.Collapse id="navbarContent">

@@ -147,7 +147,7 @@ const CarReservation = () => {
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-            🚗 Rent-A-Car
+          🚘cab booking system
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
@@ -160,6 +160,12 @@ const CarReservation = () => {
               </Nav.Link>
               <Nav.Link as={Link} to="/UserActiveBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
                 Active Rentals
+              </Nav.Link>
+              <Nav.Link as={Link} to="/About" className="text-gray-700 hover:text-blue-600 transition font-medium">
+                About 
+              </Nav.Link>
+              <Nav.Link as={Link} to="/Help" className="text-gray-700 hover:text-blue-600 transition font-medium">
+                Help 
               </Nav.Link>
               <Button 
                 as={Link} 

@@ -7,54 +7,71 @@ function DriverDashboard() {
   const [rides, setRides] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/rental/all")
-      .then((res) => res.json())
-      .then((data) => {
-        setRides(
-          data.filter(
-            (ride) =>
-              Number(ride.driverid) === Number(driverID) && ride.bookstatus === 1
-          )
+    const fetchRides = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/rental/all");
+        if (!response.ok) throw new Error("Failed to fetch rides");
+        const data = await response.json();
+        const filteredRides = data.filter(
+          (ride) =>
+            Number(ride.driverid) === Number(driverID) && ride.bookstatus === 1
         );
-      })
-      .catch((err) => console.error("Error fetching rides:", err));
+        setRides(filteredRides);
+      } catch (err) {
+        console.error("Error fetching rides:", err);
+      }
+    };
+
+    fetchRides();
   }, [driverID]);
 
-  const handleArrived = (rideID) => {
-    fetch(`http://localhost:8080/rental/update/${rideID}/status2`, {
-      method: "PUT",
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject("Failed to update")))
-      .then((updatedRide) => {
-        setRides((prev) =>
-          prev.map((r) => (r.id === updatedRide.id ? updatedRide : r))
-        );
-        alert("Ride status updated to Arrived!");
-      })
-      .catch((err) => console.error("Error updating booking status:", err));
+  const handleArrived = async (rideID) => {
+    try {
+      const response = await fetch(`http://localhost:8080/rental/update/${rideID}/status2`, {
+        method: "PUT",
+      });
+      if (!response.ok) throw new Error("Failed to update ride status");
+      const updatedRide = await response.json();
+      setRides((prev) =>
+        prev.map((r) => (r.id === updatedRide.id ? updatedRide : r))
+      );
+      alert("Ride status updated to Arrived!");
+    } catch (err) {
+      console.error("Error updating booking status:", err);
+      alert("Failed to update ride status. Please try again.");
+    }
   };
 
   return (
     <>
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200">
-  <Container>
-    <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
-      🚗 Rent-A-Car
-    </Navbar.Brand>
-    <Navbar.Toggle aria-controls="navbarContent" />
-    <Navbar.Collapse id="navbarContent">
-      <Nav className="ms-auto flex items-center gap-4">
-              <Nav.Link as={Link} to="/driver" className="text-gray-700 hover:text-blue-600 transition font-medium">Reserve a Vehicle</Nav.Link>
-              <Nav.Link className="text-gray-700 hover:text-blue-600 transition font-medium">Active Rentals</Nav.Link>
-        <Button as={Link} to="/" variant="outline-danger" className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
-          Logout
-        </Button>
-      </Nav>
-    </Navbar.Collapse>
-  </Container>
-</Navbar>
+        <Container>
+          <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
+          🚘cab booking system
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarContent" />
+          <Navbar.Collapse id="navbarContent">
+            <Nav className="ms-auto flex items-center gap-4">
+              <Nav.Link as={Link} to="/driver" className="text-gray-700 hover:text-blue-600 transition font-medium">
+                Reserve a Vehicle
+              </Nav.Link>
+              <Nav.Link as={Link} to="/driver/active-rentals" className="text-gray-700 hover:text-blue-600 transition font-medium">
+                Active Rentals
+              </Nav.Link>
+              <Button
+                as={Link}
+                to="/"
+                variant="outline-danger"
+                className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
+              >
+                Logout
+              </Button>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
       <Container>
-        <h4 className="text-center">Driver ID: {driverID || "Unavailable"}</h4>
+        <h4 className="text-center mb-4">Driver ID: {driverID || "Unavailable"}</h4>
         {rides.length > 0 ? (
           rides.map((ride) => (
             <Card key={ride.id} className="mb-3 shadow">
