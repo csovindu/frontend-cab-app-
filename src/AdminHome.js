@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
-
+import { Navbar, Nav, Container, Form, Button, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function AdminHome() {
   const [formData, setFormData] = useState({
@@ -86,7 +86,30 @@ function AdminHome() {
 
   return (
     <>
-     
+      {/* Navigation Bar */}
+      <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200">
+  <Container>
+    <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
+      🚗 Rent-A-Car
+    </Navbar.Brand>
+    <Navbar.Toggle aria-controls="navbarContent" />
+    <Navbar.Collapse id="navbarContent">
+      <Nav className="ms-auto flex items-center gap-4">
+        <Nav.Link onClick={(e) => e.preventDefault()} className="text-gray-700 hover:text-blue-600 transition font-medium">Add Car</Nav.Link>
+        <Nav.Link as={Link} to="/ManageCar" className="text-gray-700 hover:text-blue-600 transition font-medium">Manage Cars</Nav.Link>
+        <Nav.Link as={Link} to="/AddDriver" className="text-gray-700 hover:text-blue-600 transition font-medium">Add Driver</Nav.Link>
+        <Nav.Link as={Link} to="/DeleteDrivers" className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Drivers</Nav.Link>
+        <Nav.Link as={Link} to="/DeleteUsers" className="text-gray-700 hover:text-blue-600 transition font-medium">Delete Users</Nav.Link>
+        <Nav.Link as={Link} to="/ManageBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">Manage Bookings</Nav.Link>
+        <Button as={Link} to="/" variant="outline-danger" className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
+          Logout
+        </Button>
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
+
+
       {/* Add Car Form */}
       <Container>
         <h2 className="mb-4">Add New Car</h2>
@@ -112,7 +135,7 @@ function AdminHome() {
 
           <Form.Group className="mb-3">
             <Form.Label>Capacity</Form.Label>
-            <Form.Control type="number" name="capacity" value={formData.capacity} onChange={handleInputChange} required />
+            <Form.Control type="number" name="licensePlate" value={formData.capacity} onChange={handleInputChange} required />
           </Form.Group>
 
           <Form.Group className="mb-3">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 
 function DriverDashboard() {
@@ -84,6 +85,24 @@ function DriverDashboard() {
 
   return (
     <>
+          {/* Navigation Bar */}
+      <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200">
+  <Container>
+    <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-xl flex items-center">
+      🚗 Rent-A-Car
+    </Navbar.Brand>
+    <Navbar.Toggle aria-controls="navbarContent" />
+    <Navbar.Collapse id="navbarContent">
+      <Nav className="ms-auto flex items-center gap-4">
+                <Nav.Link onClick={(e) => e.preventDefault()} className="text-gray-700 hover:text-blue-600 transition font-medium">Reserve a Vehicle</Nav.Link>
+                <Nav.Link as={Link} to="/DriverInProgressBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">Active Rentals</Nav.Link>
+        <Button as={Link} to="/" variant="outline-danger" className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition">
+          Logout
+        </Button>
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
     <Container>
       <h4 className="text-center mb-4">Your Driver ID: {driverId || "Not Available"}</h4>
       <Row>
