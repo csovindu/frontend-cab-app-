@@ -5,9 +5,15 @@ import AuthPage from "./AuthPage";
 import AdminHome from "./AdminHome";
 import DriverHome from "./DriverHome";
 import CustomerHomePage from "./CustomerHomePage";
-import ManageBookings from "./ManageBookings";
-import ManageCar from "./ManageCar";
+import ViewBookings from "./ViewBookings";
+import UserActiveBookings from "./UserActiveBookings";
 import DriverInProgressBookings from "./DriverInProgressBookings";
+import ManageCar from "./ManageCar";
+import AddDriver from "./AddDriver";
+import DeleteDrivers from "./DeleteDrivers";
+import DeleteUsers from "./DeleteUsers";
+import ManageBookings from "./ManageBookings";
+
 
 function App() {
   return (
@@ -16,11 +22,17 @@ function App() {
         <Route path="/" element={<AuthPage />} />
         <Route path="/admin" element={<AdminHome />} />
         <Route path="/driver" element={<DriverHome />} />
-        <Route path="/customer" element={<CustomerHomePage />} /> 
-        <Route path="/ManageBookings" element={<ManageBookings />} />
-        <Route path="/DeleteDrivers" element={<DeleteDrivers />} />
-        <Route path="/ManageCar" element={<ManageCar />} />
+        <Route path="/customer" element={<CustomerHomePage />} />
+        <Route path="/ViewBookings" element={<ViewBookings />} />
+        <Route path="/UserActiveBookings" element={<UserActiveBookings />} />
         <Route path="/DriverInProgressBookings" element={<DriverInProgressBookings />} />
+        <Route path="/ManageCar" element={<ManageCar />} />
+        <Route path="/AdminHome" element={<AdminHome />} />
+        <Route path="/AddDriver" element={<AddDriver />} />
+        <Route path="/DeleteDrivers" element={<DeleteDrivers />} />
+        <Route path="/DeleteUsers" element={<DeleteUsers />} />
+        <Route path="/ManageBookings" element={<ManageBookings />} />
+        
       </Routes>
     </Router>
   );
