@@ -127,7 +127,7 @@ function DriverDashboard() {
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-          🚘cab booking system
+          🚘 Cab Booking System
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
@@ -138,7 +138,7 @@ function DriverDashboard() {
               <Nav.Link as={Link} to="/ViewBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
                 My Reservations
               </Nav.Link>
-              <Nav.Link as={Link} to="/OngoingRentals" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/UserActiveBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
                 Active Rentals
               </Nav.Link>
               <Nav.Link as={Link} to="/About" className="text-gray-700 hover:text-blue-600 transition font-medium"> About </Nav.Link>
@@ -161,12 +161,7 @@ function DriverDashboard() {
       {/* Main Content */}
       <Container className="py-5">
         {/* Header */}
-        <div className="text-center mb-5">
-          <h4 className="display-6 fw-bold text-primary">Driver Dashboard</h4>
-          <Badge bg="secondary" className="mt-2 px-3 py-2">
-            Driver ID: {driverId || "Not Available"}
-          </Badge>
-        </div>
+
 
         {/* Bookings Grid */}
         {assignedBookings.length > 0 ? (

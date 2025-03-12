@@ -41,12 +41,12 @@ const Help = () => {
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-          🚘cab booking system
+          🚘 Cab Booking System
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
             <Nav className="ms-auto flex items-center gap-5">
-              <Nav.Link onClick={(e) => e.preventDefault()} className="text-gray-700 hover:text-blue-600 transition font-medium">
+            <Nav.Link as={Link} to="/customer"className="text-gray-700 hover:text-blue-600 transition font-medium">
                 Reserve a Vehicle
               </Nav.Link>
               <Nav.Link as={Link} to="/ViewBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">

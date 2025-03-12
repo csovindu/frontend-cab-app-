@@ -79,7 +79,7 @@ function DriverHome() {
       >
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 fw-bold text-xl d-flex align-items-center">
-            <span className="me-2">🚘</span> Rent-A-Car
+            <span className="me-2">🚘 Cab Booking System            </span> 
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
@@ -107,12 +107,7 @@ function DriverHome() {
       </Navbar>
 
       <Container className="py-4">
-        <h4
-          className="text-center mb-5 fw-bold"
-          style={{ color: "#007bff", fontSize: "1.75rem", letterSpacing: "1px" }}
-        >
-          Your Driver ID: {driverId || "Not Available"}
-        </h4>
+
 
         {filteredBookings.length > 0 ? (
           <Row xs={1} md={2} lg={3} className="g-4">

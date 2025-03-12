@@ -48,7 +48,8 @@ const DriverHelp = () => {
       <Navbar bg="white" expand="lg" className="mb-5 shadow-lg" style={{ borderBottom: "2px solid #e9ecef", borderRadius: "0 0 20px 20px" }}>
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 fw-bold text-xl d-flex align-items-center">
-            <span className="me-2">🚘</span> Rent-A-Car
+            <span className="me-2">🚘 Cab Booking System
+            </span> 
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
@@ -181,7 +182,7 @@ const DriverHelp = () => {
             </p>
             <Button 
               as={Link} 
-              to="/drive" 
+              to="/DRiverHome" 
               style={{ background: "linear-gradient(45deg, #007bff, #00c4cc)", border: "none" }}
               className="px-5 py-3 fw-semibold rounded-pill shadow-lg hover-bg-blue-600 transition"
             >

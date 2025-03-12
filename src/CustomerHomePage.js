@@ -147,7 +147,7 @@ const CarReservation = () => {
       <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
         <Container>
           <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-          🚘cab booking system
+          🚘 Cab Booking System
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
@@ -184,12 +184,7 @@ const CarReservation = () => {
       <Container className="py-5">
         {/* Car Listings Header */}
         <div className="text-center mb-5">
-          <h2 className="display-4 fw-bold text-dark mb-3" style={{ letterSpacing: "1px" }}>
-            Available Vehicles
-          </h2>
-          <h5 className="text-info fw-semibold">
-            User ID: <span className="badge bg-info text-white">{userIdentifier}</span>
-          </h5>
+
           {/* Search Bar */}
           <Form className="mt-4 d-flex justify-content-center">
             <FormControl
