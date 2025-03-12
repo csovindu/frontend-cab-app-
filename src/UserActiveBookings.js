@@ -1,7 +1,151 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container, Card, Button, Row, Col, Badge, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { FaCar, FaMapMarkerAlt, FaClock, FaRoad, FaDollarSign, FaTrash, FaFileDownload, FaCreditCard } from "react-icons/fa";
+import styled from "styled-components";
 import jsPDF from "jspdf";
+
+const StyledContainer = styled(Container)`
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+`;
+
+const BackgroundCircles = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.2), transparent);
+    border-radius: 50%;
+    top: 5%;
+    left: 15%;
+    animation: float 6s infinite ease-in-out;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(46, 204, 113, 0.2), transparent);
+    border-radius: 50%;
+    bottom: 10%;
+    right: 10%;
+    animation: float 8s infinite ease-in-out reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+  }
+`;
+
+const StyledNavbar = styled(Navbar)`
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 15px;
+  margin-bottom: 40px;
+  padding: 15px 20px;
+`;
+
+const StyledCard = styled(Card)`
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.3);
+  }
+
+  .card-header {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    border-bottom: none;
+  }
+
+  .card-footer {
+    background: linear-gradient(45deg, #2ecc71, #27ae60);
+    border-top: none;
+  }
+`;
+
+const StyledModal = styled(Modal)`
+  .modal-content {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(8px);
+    border: none;
+  }
+
+  .modal-header {
+    background: linear-gradient(45deg, #343a40, #495057);
+    border-radius: 20px 20px 0 0;
+    color: white;
+    border: none;
+  }
+
+  .modal-body {
+    padding: 25px;
+  }
+
+  .modal-footer {
+    border-top: none;
+    background: #f8f9fa;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const StyledFormControl = styled(Form.Control)`
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+`;
+
+const StyledSelect = styled(Form.Select)`
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+`;
 
 function DriverDashboard() {
   const driverId = localStorage.getItem("userId");
@@ -28,13 +172,11 @@ function DriverDashboard() {
     fetchAssignedBookings();
   }, [driverId]);
 
-  // Open payment modal
   const handlePaymentClick = (booking) => {
     setSelectedBooking(booking);
     setShowPaymentModal(true);
   };
 
-  // Simulate payment and update status
   const processPayment = async () => {
     if (!selectedBooking) return;
 
@@ -63,7 +205,6 @@ function DriverDashboard() {
     }
   };
 
-  // Delete booking
   const handleDeleteBooking = async (bookingId) => {
     if (!window.confirm("Are you sure you want to delete this booking?")) return;
 
@@ -82,24 +223,20 @@ function DriverDashboard() {
     }
   };
 
-  // Generate and download PDF bill
   const downloadBillAsPDF = (booking) => {
     const doc = new jsPDF();
     
-    // Header
     doc.setFontSize(20);
-    doc.setTextColor(0, 102, 204); // Blue color
+    doc.setTextColor(52, 152, 219);
     doc.text("Rent-A-Car Bill", 105, 20, { align: "center" });
     
-    // Subheader
     doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0); // Black color
+    doc.setTextColor(0, 0, 0);
     doc.text("Driver Dashboard Receipt", 105, 30, { align: "center" });
 
-    // Bill details
     doc.setFontSize(14);
     doc.setLineWidth(0.5);
-    doc.line(20, 40, 190, 40); // Horizontal line
+    doc.line(20, 40, 190, 40);
 
     doc.setFontSize(12);
     doc.text(`Booking ID: ${booking.id}`, 20, 50);
@@ -112,10 +249,9 @@ function DriverDashboard() {
     doc.text(`Payment Status: ${booking.paymentstatus === 1 ? "Paid" : "Unpaid"}`, 20, 120);
     doc.text(`Status: Driver Accepted`, 20, 130);
 
-    // Footer
-    doc.line(20, 140, 190, 140); // Horizontal line
+    doc.line(20, 140, 190, 140);
     doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100); // Gray color
+    doc.setTextColor(100, 100, 100);
     doc.text("Thank you for using Rent-A-Car!", 105, 150, { align: "center" });
 
     doc.save(`Bill_Booking_${booking.id}.pdf`);
@@ -123,190 +259,213 @@ function DriverDashboard() {
 
   return (
     <>
-      {/* Navigation Bar */}
-      <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
+      <StyledNavbar expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-          🚘 Cab Booking System
+          <Navbar.Brand as={Link} to="/" style={{ 
+            color: "#3498db", 
+            fontWeight: "bold", 
+            fontSize: "1.8rem",
+            display: "flex",
+            alignItems: "center"
+          }}>
+            <FaCar className="me-2" /> Cab Booking
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
-            <Nav className="ms-auto flex items-center gap-5">
-              <Nav.Link as={Link} to="/customer" className="text-gray-700 hover:text-blue-600 transition font-medium">
+            <Nav className="ms-auto">
+              <Nav.Link as={Link} to="/customer" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 Reserve a Vehicle
               </Nav.Link>
-              <Nav.Link as={Link} to="/ViewBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/ViewBookings" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 My Reservations
               </Nav.Link>
-              <Nav.Link as={Link} to="/UserActiveBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/UserActiveBookings" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 Active Rentals
               </Nav.Link>
-              <Nav.Link as={Link} to="/About" className="text-gray-700 hover:text-blue-600 transition font-medium"> About </Nav.Link>
-              <Nav.Link as={Link} to="/Help" className="text-gray-700 hover:text-blue-600 transition font-medium">
-              Help 
+              <Nav.Link as={Link} to="/About" style={{ color: "#2c3e50", padding: "10px 15px" }}>
+                About
               </Nav.Link>
-              <Button 
-                as={Link} 
-                to="/" 
-                variant="outline-danger" 
-                className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
+              <Nav.Link as={Link} to="/Help" style={{ color: "#2c3e50", padding: "10px 15px" }}>
+                Help
+              </Nav.Link>
+              <StyledButton
+                as={Link}
+                to="/"
+                variant="outline-danger"
+                style={{ 
+                  borderRadius: "25px", 
+                  borderColor: "#e74c3c",
+                  color: "#e74c3c",
+                  background: "transparent"
+                }}
               >
                 Logout
-              </Button>
+              </StyledButton>
             </Nav>
           </Navbar.Collapse>
         </Container>
-      </Navbar>
+      </StyledNavbar>
 
-      {/* Main Content */}
-      <Container className="py-5">
-        {/* Header */}
+      <StyledContainer>
+        <BackgroundCircles />
+        <div className="text-center mb-5">
+          <h1 style={{ 
+            background: "linear-gradient(to right, #3498db, #2ecc71)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            fontWeight: "bold",
+            fontSize: "2.5rem"
+          }}>
+            Driver Dashboard
+          </h1>
+          <p style={{ color: "#7f8c8d" }}>Assigned Bookings for Driver ID: {driverId || "N/A"}</p>
+        </div>
 
-
-        {/* Bookings Grid */}
         {assignedBookings.length > 0 ? (
           <Row xs={1} md={2} lg={3} className="g-4">
             {assignedBookings.map((booking) => (
               <Col key={booking.id}>
-                <Card 
-                  className="h-100 shadow-lg border-0"
-                  style={{ borderRadius: "15px", overflow: "hidden", transition: "transform 0.3s" }}
-                >
-                  <Card.Header className="bg-primary text-white py-3" style={{ borderBottom: "3px solid #fff" }}>
-                    <Card.Title className="mb-0 fw-bold">Bill #{booking.id}</Card.Title>
-                    <Card.Subtitle className="mt-1 opacity-75">User ID: {booking.userid}</Card.Subtitle>
+                <StyledCard>
+                  <Card.Header className="text-white py-3">
+                    <Card.Title style={{ marginBottom: 0, fontWeight: "bold" }}>
+                      Bill #{booking.id}
+                    </Card.Title>
+                    <Card.Subtitle style={{ marginTop: "5px", opacity: 0.75 }}>
+                      User ID: {booking.userid}
+                    </Card.Subtitle>
                   </Card.Header>
-
                   <Card.Body className="p-4">
-                    <div className="d-flex flex-column gap-3">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Car ID:</strong>
+                    <div className="d-flex flex-column gap-2" style={{ color: "#7f8c8d" }}>
+                      <div className="d-flex justify-content-between">
+                        <strong><FaCar className="me-2" />Car ID:</strong>
                         <span>{booking.carid}</span>
                       </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Pickup Location:</strong>
+                      <div className="d-flex justify-content-between">
+                        <strong><FaMapMarkerAlt className="me-2" />Pickup Location:</strong>
                         <span>{booking.location}</span>
                       </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Pickup Time:</strong>
-                        <span>{booking.time}</span>
+                      <div className="d-flex justify-content-between">
+                        <strong><FaClock className="me-2" />Pickup Time:</strong>
+                        <span>{new Date(booking.time).toLocaleString()}</span>
                       </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Travel Distance:</strong>
-                        <Badge bg={booking.travelDistance > 0 ? "info" : "warning"}>
+                      <div className="d-flex justify-content-between">
+                        <strong><FaRoad className="me-2" />Travel Distance:</strong>
+                        <Badge bg={booking.travelDistance > 0 ? "info" : "warning"} className="px-2 py-1">
                           {booking.travelDistance > 0 ? `${booking.travelDistance} km` : "Not Complete"}
                         </Badge>
                       </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Total Fee:</strong>
-                        <span className="fw-bold text-success">${booking.totalfee ? booking.totalfee.toFixed(2) : "N/A"}</span>
+                      <div className="d-flex justify-content-between">
+                        <strong><FaDollarSign className="me-2" />Total Fee:</strong>
+                        <span style={{ color: "#2ecc71", fontWeight: "bold" }}>
+                          ${booking.totalfee ? booking.totalfee.toFixed(2) : "N/A"}
+                        </span>
                       </div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <strong className="text-muted">Payment Status:</strong>
+                      <div className="d-flex justify-content-between">
+                        <strong>Payment Status:</strong>
                         <Badge bg={booking.paymentstatus === 1 ? "success" : "danger"} className="px-2 py-1">
                           {booking.paymentstatus === 1 ? "Paid" : "Unpaid"}
                         </Badge>
                       </div>
                     </div>
                   </Card.Body>
-
-                  <Card.Footer className="bg-success text-white text-center py-3">
-                    <p className="mb-2 fw-bold">✓ Driver Accepted</p>
+                  <Card.Footer className="text-white text-center py-3">
+                    <p className="mb-2" style={{ fontWeight: "bold" }}>✓ Driver Accepted</p>
                     <div className="d-flex justify-content-center gap-2">
                       {booking.paymentstatus === 0 && (
-                        <Button
+                        <StyledButton
                           variant="light"
-                          className="rounded-pill px-4 py-1 fw-semibold"
-                          style={{ background: "white", color: "#28a745", border: "none" }}
                           onClick={() => handlePaymentClick(booking)}
+                          style={{ background: "linear-gradient(45deg, #3498db, #2980b9)", border: "none" }}
                         >
-                          Make Payment
-                        </Button>
+                          <FaCreditCard className="me-2" /> Make Payment
+                        </StyledButton>
                       )}
-                      <Button
+                      <StyledButton
                         variant="light"
-                        className="rounded-pill px-4 py-1 fw-semibold"
-                        style={{ background: "white", color: "#007bff", border: "none" }}
                         onClick={() => downloadBillAsPDF(booking)}
+                        style={{ background: "linear-gradient(45deg, #f1c40f, #e67e22)", border: "none" }}
                       >
-                        Download Bill
-                      </Button>
-                      <Button
-                        variant="light"
-                        className="rounded-pill px-4 py-1 fw-semibold"
-                        style={{ background: "white", color: "#dc3545", border: "none" }}
+                        <FaFileDownload className="me-2" /> Download Bill
+                      </StyledButton>
+                      <StyledButton
+                        variant="danger"
                         onClick={() => handleDeleteBooking(booking.id)}
+                        style={{ background: "linear-gradient(45deg, #e74c3c, #c0392b)", border: "none" }}
                       >
-                        Delete
-                      </Button>
+                        <FaTrash className="me-2" /> Delete
+                      </StyledButton>
                     </div>
                   </Card.Footer>
-                </Card>
+                </StyledCard>
               </Col>
             ))}
           </Row>
         ) : (
           <div className="text-center mt-5">
-            <Card className="shadow-sm border-0 mx-auto" style={{ maxWidth: "500px" }}>
+            <StyledCard style={{ maxWidth: "500px", margin: "0 auto" }}>
               <Card.Body className="py-5">
-                <h5 className="text-muted mb-3">No Confirmed Bookings</h5>
-                <p className="text-secondary">Currently, there are no bookings assigned to you. Check back later!</p>
+                <h5 style={{ color: "#7f8c8d" }}>No Confirmed Bookings</h5>
+                <p style={{ color: "#7f8c8d" }}>Currently, there are no bookings assigned to you. Check back later!</p>
               </Card.Body>
-            </Card>
+            </StyledCard>
           </div>
         )}
-      </Container>
 
-      {/* Payment Modal */}
-      <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
-        <Modal.Header className="bg-dark text-white border-0" style={{ borderRadius: "15px 15px 0 0" }}>
-          <Modal.Title className="fw-bold">Process Payment for Booking #{selectedBooking?.id}</Modal.Title>
-          <Button variant="link" className="text-white" onClick={() => setShowPaymentModal(false)} style={{ textDecoration: "none" }}>
-            ×
-          </Button>
-        </Modal.Header>
-        <Modal.Body className="p-4" style={{ background: "#f8f9fa" }}>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">Total Amount</Form.Label>
-              <Form.Control
-                type="text"
-                value={`$${selectedBooking?.totalfee ? selectedBooking.totalfee.toFixed(2) : "N/A"}`}
-                readOnly
-                className="shadow-sm"
-                style={{ borderRadius: "10px" }}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-bold">Payment Method</Form.Label>
-              <Form.Select className="shadow-sm" style={{ borderRadius: "10px" }}>
-                <option value="credit">Credit Card</option>
-                <option value="debit">Debit Card</option>
-                <option value="paypal">PayPal</option>
-              </Form.Select>
-            </Form.Group>
-            <p className="text-muted">This is a simulated payment. In a real application, you'd integrate with a payment gateway.</p>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer className="bg-light border-0" style={{ borderRadius: "0 0 15px 15px" }}>
-          <Button
-            variant="secondary"
-            className="rounded-pill px-4 py-2 fw-semibold"
-            onClick={() => setShowPaymentModal(false)}
-            style={{ background: "linear-gradient(45deg, #6c757d, #adb5bd)", border: "none" }}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="success"
-            className="rounded-pill px-4 py-2 fw-semibold"
-            onClick={processPayment}
-            style={{ background: "linear-gradient(45deg, #28a745, #38d39f)", border: "none" }}
-          >
-            Confirm Payment
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        <StyledModal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
+          <Modal.Header>
+            <Modal.Title>
+              <FaCreditCard className="me-2" /> Process Payment for Booking #{selectedBooking?.id}
+            </Modal.Title>
+            <Button variant="link" style={{ color: "white" }} onClick={() => setShowPaymentModal(false)}>
+              ×
+            </Button>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-4">
+                <Form.Label style={{ color: "#2c3e50", fontWeight: "bold" }}>
+                  <FaDollarSign className="me-2" /> Total Amount
+                </Form.Label>
+                <StyledFormControl
+                  type="text"
+                  value={`$${selectedBooking?.totalfee ? selectedBooking.totalfee.toFixed(2) : "N/A"}`}
+                  readOnly
+                  style={{ background: "#ecf0f1" }}
+                />
+              </Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label style={{ color: "#2c3e50", fontWeight: "bold" }}>
+                  Payment Method
+                </Form.Label>
+                <StyledSelect>
+                  <option value="credit">Credit Card</option>
+                  <option value="debit">Debit Card</option>
+                  <option value="paypal">PayPal</option>
+                </StyledSelect>
+              </Form.Group>
+              <p style={{ color: "#7f8c8d", fontSize: "0.9rem" }}>
+                This is a simulated payment. In a real application, you'd integrate with a payment gateway.
+              </p>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <StyledButton
+              variant="secondary"
+              onClick={() => setShowPaymentModal(false)}
+              style={{ background: "linear-gradient(45deg, #95a5a6, #7f8c8d)", border: "none" }}
+            >
+              Cancel
+            </StyledButton>
+            <StyledButton
+              variant="success"
+              onClick={processPayment}
+              style={{ background: "linear-gradient(45deg, #2ecc71, #27ae60)", border: "none" }}
+            >
+              Confirm Payment
+            </StyledButton>
+          </Modal.Footer>
+        </StyledModal>
+      </StyledContainer>
     </>
   );
 }

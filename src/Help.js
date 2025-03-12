@@ -1,31 +1,186 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav, Container, Button, Row, Col, Accordion, Card, Form, Modal } from "react-bootstrap";
-import "./App.css"; // Assuming you have some global styles
+import { FaCar, FaQuestionCircle, FaEnvelope, FaPhone, FaComment, FaPaperPlane } from "react-icons/fa";
+import styled from "styled-components";
+
+const StyledContainer = styled(Container)`
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+`;
+
+const BackgroundCircles = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.2), transparent);
+    border-radius: 50%;
+    top: 5%;
+    left: 15%;
+    animation: float 6s infinite ease-in-out;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(46, 204, 113, 0.2), transparent);
+    border-radius: 50%;
+    bottom: 10%;
+    right: 10%;
+    animation: float 8s infinite ease-in-out reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-25px); }
+  }
+`;
+
+const StyledNavbar = styled(Navbar)`
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 15px;
+  margin-bottom: 40px;
+  padding: 15px 20px;
+`;
+
+const StyledCard = styled(Card)`
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(31, 38, 135, 0.3);
+  }
+`;
+
+const StyledAccordion = styled(Accordion)`
+  .accordion-item {
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(8px);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .accordion-header button {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    border-radius: 20px 20px 0 0;
+    padding: 15px;
+    font-weight: 600;
+  }
+
+  .accordion-body {
+    padding: 20px;
+    color: #7f8c8d;
+  }
+`;
+
+const StyledModal = styled(Modal)`
+  .modal-content {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+    backdrop-filter: blur(8px);
+    border: none;
+  }
+
+  .modal-header {
+    background: linear-gradient(45deg, #343a40, #495057);
+    border-radius: 20px 20px 0 0;
+    color: white;
+    border: none;
+  }
+
+  .modal-body {
+    padding: 25px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #f8f9fa;
+  }
+
+  .modal-footer {
+    border-top: none;
+    background: #f8f9fa;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const StyledFormControl = styled(Form.Control)`
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+`;
+
+const ChatBubble = styled.div`
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 70%;
+  margin-bottom: 15px;
+  background: ${props => (props.isUser ? "linear-gradient(45deg, #3498db, #2980b9)" : "#ecf0f1")};
+  color: ${props => (props.isUser ? "white" : "#2c3e50")};
+`;
 
 const Help = () => {
-  // State for Chatbot Modal
   const [showChatbot, setShowChatbot] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
   const [chatResponses, setChatResponses] = useState([
     { sender: "Bot", message: "Hello! How can I assist you today? Type 'book' to make a booking or ask a question." }
   ]);
 
-  // Handle Chatbot Input
   const handleChatSubmit = (e) => {
     e.preventDefault();
     if (!chatMessage.trim()) return;
 
-    // Add user's message to chat
     setChatResponses(prev => [...prev, { sender: "You", message: chatMessage }]);
 
-    // Simple bot logic
     let botResponse = "I'm here to help! Could you please clarify your request?";
     if (chatMessage.toLowerCase().includes("book")) {
       botResponse = "To book a car, I'll need some details. Please provide: Pickup Location, Time (YYYY-MM-DDTHH:MM), and Distance (km). For example: 'Colombo, 2025-03-15T10:00, 20'";
     } else if (chatMessage.toLowerCase().includes("location") && chatMessage.toLowerCase().includes("time") && chatMessage.toLowerCase().includes("km")) {
       botResponse = "Great! I've submitted your booking request. Please check 'My Reservations' for confirmation.";
-      // Here you could add API call to /rental/create with parsed data
+      // Add API call here if needed
     }
 
     setTimeout(() => {
@@ -37,63 +192,79 @@ const Help = () => {
 
   return (
     <>
-      {/* Navigation Bar */}
-      <Navbar bg="white" expand="lg" className="mb-4 shadow-lg border-b-2 border-gray-200 rounded-b-xl">
+      <StyledNavbar expand="lg">
         <Container>
-          <Navbar.Brand as={Link} to="/" className="text-blue-600 font-bold text-2xl flex items-center">
-          🚘 Cab Booking System
+          <Navbar.Brand as={Link} to="/" style={{ 
+            color: "#3498db", 
+            fontWeight: "bold", 
+            fontSize: "1.8rem",
+            display: "flex",
+            alignItems: "center"
+          }}>
+            <FaCar className="me-2" /> Cab Booking
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarContent" />
           <Navbar.Collapse id="navbarContent">
-            <Nav className="ms-auto flex items-center gap-5">
-            <Nav.Link as={Link} to="/customer"className="text-gray-700 hover:text-blue-600 transition font-medium">
+            <Nav className="ms-auto">
+              <Nav.Link as={Link} to="/customer" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 Reserve a Vehicle
               </Nav.Link>
-              <Nav.Link as={Link} to="/ViewBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/ViewBookings" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 My Reservations
               </Nav.Link>
-              <Nav.Link as={Link} to="/UserActiveBookings" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/UserActiveBookings" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 Active Rentals
               </Nav.Link>
-              <Nav.Link as={Link} to="/About" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/About" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 About
               </Nav.Link>
-              <Nav.Link as={Link} to="/Help" className="text-gray-700 hover:text-blue-600 transition font-medium">
+              <Nav.Link as={Link} to="/Help" style={{ color: "#2c3e50", padding: "10px 15px" }}>
                 Help
               </Nav.Link>
-              <Button 
-                as={Link} 
-                to="/" 
-                variant="outline-danger" 
-                className="rounded-full px-4 py-2 font-medium border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition"
+              <StyledButton
+                as={Link}
+                to="/"
+                variant="outline-danger"
+                style={{ 
+                  borderRadius: "25px", 
+                  borderColor: "#e74c3c",
+                  color: "#e74c3c",
+                  background: "transparent"
+                }}
               >
                 Logout
-              </Button>
+              </StyledButton>
             </Nav>
           </Navbar.Collapse>
         </Container>
-      </Navbar>
+      </StyledNavbar>
 
-      {/* Help Page Content */}
-      <Container className="py-5">
-        {/* Header Section */}
+      <StyledContainer>
+        <BackgroundCircles />
         <Row className="text-center mb-5">
           <Col>
-            <h1 className="display-4 fw-bold text-dark" style={{ letterSpacing: "1px" }}>
+            <h1 style={{ 
+              background: "linear-gradient(to right, #3498db, #2ecc71)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontWeight: "bold",
+              fontSize: "2.5rem"
+            }}>
               Help Center
             </h1>
-            <p className="lead text-muted mt-3" style={{ maxWidth: "700px", margin: "0 auto" }}>
+            <p style={{ color: "#7f8c8d", maxWidth: "700px", margin: "0 auto" }}>
               Find answers to your questions or get assistance with cab booking system services.
             </p>
           </Col>
         </Row>
 
-        {/* FAQ Section */}
         <Row className="mb-5">
           <Col>
-            <h2 className="fw-bold text-primary mb-4">Frequently Asked Questions</h2>
-            <Accordion defaultActiveKey="0">
-              <Accordion.Item eventKey="0" className="mb-3 shadow-sm" style={{ borderRadius: "10px" }}>
+            <h2 style={{ color: "#2c3e50", fontWeight: "bold", marginBottom: "20px" }}>
+              <FaQuestionCircle className="me-2" /> Frequently Asked Questions
+            </h2>
+            <StyledAccordion defaultActiveKey="0">
+              <Accordion.Item eventKey="0">
                 <Accordion.Header>How do I book a car?</Accordion.Header>
                 <Accordion.Body>
                   To book a car, go to the "Reserve a Vehicle" page, browse available cars, select your preferred vehicle, 
@@ -101,141 +272,128 @@ const Help = () => {
                   Click "Confirm" to complete your booking. Or use our chatbot below!
                 </Accordion.Body>
               </Accordion.Item>
-              <Accordion.Item eventKey="1" className="mb-3 shadow-sm" style={{ borderRadius: "10px" }}>
+              <Accordion.Item eventKey="1">
                 <Accordion.Header>How is the total fee calculated?</Accordion.Header>
                 <Accordion.Body>
                   The total fee is calculated by multiplying the car's price per kilometer by the travel distance you 
                   enter in the booking form. The fee is displayed automatically before you confirm your booking.
                 </Accordion.Body>
               </Accordion.Item>
-              <Accordion.Item eventKey="2" className="mb-3 shadow-sm" style={{ borderRadius: "10px" }}>
+              <Accordion.Item eventKey="2">
                 <Accordion.Header>Can I cancel a booking?</Accordion.Header>
                 <Accordion.Body>
                   Yes, you can cancel a booking by navigating to "My Reservations," finding your booking, and selecting 
                   the cancel option. Note that cancellation policies may apply depending on the timing.
                 </Accordion.Body>
               </Accordion.Item>
-              <Accordion.Item eventKey="3" className="mb-3 shadow-sm" style={{ borderRadius: "10px" }}>
+              <Accordion.Item eventKey="3">
                 <Accordion.Header>What if I need help during my rental?</Accordion.Header>
                 <Accordion.Body>
                   If you need assistance during your rental, check your "Active Rentals" page for driver contact details 
                   or reach out to our support team via email or chat below.
                 </Accordion.Body>
               </Accordion.Item>
-            </Accordion>
+            </StyledAccordion>
           </Col>
         </Row>
 
-        {/* Contact Section */}
         <Row className="mb-5">
           <Col md={6} className="mb-4">
-            <Card className="shadow-sm border-0" style={{ borderRadius: "15px" }}>
+            <StyledCard>
               <Card.Body className="text-center p-4">
-                <h3 className="fw-bold text-dark mb-3">Contact Us</h3>
-                <p className="text-muted" style={{ lineHeight: "1.8" }}>
+                <h3 style={{ color: "#2c3e50", fontWeight: "bold", marginBottom: "15px" }}>
+                  <FaEnvelope className="me-2" /> Contact Us
+                </h3>
+                <p style={{ color: "#7f8c8d", lineHeight: "1.8" }}>
                   <strong>Email:</strong> ovndu.071@gmail.com <br />
                   <strong>Phone:</strong> +94 787471008 <br />
-                  
                 </p>
-                <Button 
+                <StyledButton
                   href="mailto:ovndu.071@gmail.com?subject=Support Request from Rent-A-Car&body=Please describe your issue or question here."
-                  variant="primary" 
-                  className="mt-3 px-4 py-2 fw-semibold rounded-pill"
-                  style={{ background: "linear-gradient(45deg, #007bff, #00b4db)", border: "none" }}
+                  variant="primary"
+                  style={{ background: "linear-gradient(45deg, #3498db, #2980b9)", border: "none" }}
                 >
                   Email Support
-                </Button>
+                </StyledButton>
               </Card.Body>
-            </Card>
+            </StyledCard>
           </Col>
           <Col md={6} className="mb-4">
-            <Card className="shadow-sm border-0" style={{ borderRadius: "15px" }}>
+            <StyledCard>
               <Card.Body className="text-center p-4">
-                <h3 className="fw-bold text-dark mb-3">Live Chat</h3>
-                <p className="text-muted" style={{ lineHeight: "1.8" }}>
+                <h3 style={{ color: "#2c3e50", fontWeight: "bold", marginBottom: "15px" }}>
+                  <FaComment className="me-2" /> Live Chat
+                </h3>
+                <p style={{ color: "#7f8c8d", lineHeight: "1.8" }}>
                   Need immediate assistance? Chat with our support bot or a live agent.
                 </p>
-                <Button 
-                  variant="success" 
-                  className="mt-3 px-4 py-2 fw-semibold rounded-pill"
-                  style={{ background: "linear-gradient(45deg, #28a745, #38d39f)", border: "none" }}
+                <StyledButton
+                  variant="success"
                   onClick={() => setShowChatbot(true)}
+                  style={{ background: "linear-gradient(45deg, #2ecc71, #27ae60)", border: "none" }}
                 >
                   Start Chat
-                </Button>
+                </StyledButton>
               </Card.Body>
-            </Card>
+            </StyledCard>
           </Col>
         </Row>
 
-        {/* Additional Resources */}
         <Row className="text-center">
           <Col>
-            <h2 className="fw-bold text-primary mb-4">Still Need Help?</h2>
-            <p className="text-muted mb-4" style={{ maxWidth: "600px", margin: "0 auto" }}>
+            <h2 style={{ color: "#2c3e50", fontWeight: "bold", marginBottom: "20px" }}>
+              Still Need Help?
+            </h2>
+            <p style={{ color: "#7f8c8d", maxWidth: "600px", margin: "0 auto 20px" }}>
               If you can't find the answers you need, feel free to reach out to our support team or check our detailed user guide.
             </p>
-            <Button 
-              as={Link} 
-              to="/customer" 
-              variant="outline-primary" 
-              size="lg" 
-              className="px-5 py-3 fw-semibold rounded-pill shadow-sm"
-              style={{ borderColor: "#007bff", color: "#007bff" }}
-            >
-              Back to Booking
-            </Button>
+
           </Col>
         </Row>
-      </Container>
 
-      {/* Chatbot Modal */}
-      <Modal show={showChatbot} onHide={() => setShowChatbot(false)} centered>
-        <Modal.Header className="bg-dark text-white border-0" style={{ borderRadius: "15px 15px 0 0" }}>
-          <Modal.Title className="fw-bold">Chat Support</Modal.Title>
-          <Button variant="link" className="text-white" onClick={() => setShowChatbot(false)} style={{ textDecoration: "none" }}>
-            ×
-          </Button>
-        </Modal.Header>
-        <Modal.Body className="p-4" style={{ background: "#f8f9fa", maxHeight: "400px", overflowY: "auto" }}>
-          {chatResponses.map((chat, index) => (
-            <div key={index} className={`mb-3 ${chat.sender === "You" ? "text-end" : "text-start"}`}>
-              <span 
-                className={`d-inline-block p-2 rounded ${chat.sender === "You" ? "bg-primary text-white" : "bg-light text-dark"}`}
-                style={{ maxWidth: "70%", borderRadius: "10px" }}
-              >
-                <strong>{chat.sender}:</strong> {chat.message}
-              </span>
-            </div>
-          ))}
-        </Modal.Body>
-        <Modal.Footer className="bg-light border-0" style={{ borderRadius: "0 0 15px 15px" }}>
-          <Form className="w-100" onSubmit={handleChatSubmit}>
-            <Row className="align-items-center">
-              <Col xs={9}>
-                <Form.Control
-                  type="text"
-                  placeholder="Type your message..."
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  className="shadow-sm"
-                  style={{ borderRadius: "10px" }}
-                />
-              </Col>
-              <Col xs={3}>
-                <Button 
-                  type="submit" 
-                  variant="primary" 
-                  className="w-100 rounded-pill"
-                  style={{ background: "linear-gradient(45deg, #007bff, #00b4db)", border: "none" }}
-                >
-                  Send
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Modal.Footer>
-      </Modal>
+        <StyledModal show={showChatbot} onHide={() => setShowChatbot(false)} centered>
+          <Modal.Header>
+            <Modal.Title>
+              <FaComment className="me-2" /> Chat Support
+            </Modal.Title>
+            <Button variant="link" style={{ color: "white" }} onClick={() => setShowChatbot(false)}>
+              ×
+            </Button>
+          </Modal.Header>
+          <Modal.Body>
+            {chatResponses.map((chat, index) => (
+              <div key={index} className={`text-${chat.sender === "You" ? "end" : "start"}`}>
+                <ChatBubble isUser={chat.sender === "You"}>
+                  <strong>{chat.sender}:</strong> {chat.message}
+                </ChatBubble>
+              </div>
+            ))}
+          </Modal.Body>
+          <Modal.Footer>
+            <Form className="w-100" onSubmit={handleChatSubmit}>
+              <Row className="align-items-center">
+                <Col xs={9}>
+                  <StyledFormControl
+                    type="text"
+                    placeholder="Type your message..."
+                    value={chatMessage}
+                    onChange={(e) => setChatMessage(e.target.value)}
+                  />
+                </Col>
+                <Col xs={3}>
+                  <StyledButton
+                    type="submit"
+                    variant="primary"
+                    style={{ background: "linear-gradient(45deg, #3498db, #2980b9)", border: "none", width: "100%" }}
+                  >
+                    <FaPaperPlane />
+                  </StyledButton>
+                </Col>
+              </Row>
+            </Form>
+          </Modal.Footer>
+        </StyledModal>
+      </StyledContainer>
     </>
   );
 };
