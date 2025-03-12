@@ -15,6 +15,7 @@ import DeleteUsers from "./DeleteUsers";
 import ManageBookings from "./ManageBookings";
 import About from "./About";
 import Help from "./Help";
+import DriverHelp from "./DriverHelp";
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
         <Route path="/ManageBookings" element={<ManageBookings />} />
         <Route path="/About" element={<About />} />
         <Route path="/Help" element={<Help />} />
+        <Route path="/DriverHelp" element={<DriverHelp/>} />
+        <Route path="/DriverHome" element={<DriverHome/>} />
         
       </Routes>
     </Router>
